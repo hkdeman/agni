@@ -4,9 +4,9 @@ import WebSocketHandler from './components/handlers/WebSocketHandler';
 class App extends Component {
   constructor(props) {
     super(props);
-    const ws = new WebSocketHandler('ws://localhost:8000/api/host/overview', this.onMessage);
+    const ws = new WebSocketHandler('ws://localhost:8000/api/ssh/overview', this.onMessage);
     // ws.send(JSON.stringify({'command': 'open-directory', 'directory': 'test'}));
-    // ws.send(JSON.stringify({'command': 'authentication'}));
+    ws.send(JSON.stringify({'command': 'authentication'}));
     // ws.send(JSON.stringify({'command': 'run-cmd', 'cmd': 'cd Documents/uni/'}));
     // ws.send(JSON.stringify({'command': 'run-cmd', 'cmd': 'cd intro_vision_and_robotics'}));
     // ws.send(JSON.stringify({'command': 'run-cmd', 'cmd': 'cat main-complete\(4\)-2.p'}));    
