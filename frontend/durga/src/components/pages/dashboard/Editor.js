@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import { Grid, Typography, createMuiTheme, MuiThemeProvider, Button } from '@material-ui/core';
 import KeyboardArrowLeftOutlinedIcon from '@material-ui/icons/KeyboardArrowLeftOutlined';
+
 import { PALETTE } from '../../styles/ColorPalette';
 import FileExplorerList from '../../ui/FileExplorerList';
 import WebSocketHandler from '../../handlers/WebSocketHandler';
 import { WEB_SOCKET } from '../../settings/Config';
+import CustomSnackbar from '../../ui/CustomSnackbar';
+import CodeEditor from '../../ui/CodeEditor';
+
 
 const theme = createMuiTheme({
     palette: {
@@ -16,7 +20,8 @@ const theme = createMuiTheme({
 const styles = {
     container: {
         flex: 1,
-        height: "100vh",
+        height: "94.5vh",
+        overflow: "hidden",
     },
     toolbar: {
         flexFlow: "column",
@@ -48,6 +53,10 @@ export default class Editor extends Component {
             leftPanelFilesActive: -1,
             rightPanelFilesActive: -1,
             reachedRoot: false,
+            showSnackbar: false,
+            errorMessage: "",
+            editorValue: "",
+            editorMode: "plain_text",
         };
         this.setupSockets();
         this.initialPopulationCompleted = false;
@@ -58,8 +67,7 @@ export default class Editor extends Component {
         this.socket = new WebSocketHandler(WEB_SOCKET+"/api/host/file-editor", this.populateFiles.bind(this));
     }
 
-    populateFiles(result) {
-        let resultJSON = JSON.parse(result);
+    manageDirectory(resultJSON) {
         if(!this.initialPopulationCompleted) {
             this.setState({
                 leftPanelFiles: resultJSON.files,
@@ -68,12 +76,17 @@ export default class Editor extends Component {
             this.initialPopulationCompleted=true;
         } else {
             if(this.lastClickFrom === "back") {
+                let reachedRoot = false;
+                if(resultJSON.pwd === "/") {
+                    reachedRoot = true;
+                }
                 this.setState({
                     leftPanelFiles: resultJSON.files,
                     leftPwd: resultJSON.pwd,
                     rightPanelFiles: this.state.leftPanelFiles,
                     rightPanelFilesActive: this.state.leftPanelFilesActive,
                     rightPwd: this.state.leftPwd,
+                    reachedRoot: reachedRoot,
                 });
             }
             else if(this.lastClickFrom === "right") {
@@ -83,6 +96,7 @@ export default class Editor extends Component {
                     leftPwd: this.state.rightPwd,
                     rightPanelFiles: resultJSON.files,
                     rightPwd: resultJSON.pwd,
+                    reachedRoot: false,
                 });
             } else {
                 this.setState({
@@ -92,15 +106,68 @@ export default class Editor extends Component {
             }
         }
     }
+    setMode(ext) {
+        let mode = "";
+        switch (ext) {
+            case "py":
+                mode = "python";
+                break;
+            case "java":
+                mode = "java";
+                break;
+            case "js":
+                mode = "javascript";
+                break;
+            case "html":
+                mode = "html";
+                break;
+            case "css":
+                mode = "css";
+                break;
+            case "json":
+                mode = "json";
+                break;
+            default:
+                mode = "plain_text";
+                break;
+        }
+        this.setState({
+            editorMode: mode,
+        });
+    }
+
+    manageFile(resultJSON) {
+        let ext = resultJSON.name.split('.').pop();
+        this.setMode(ext);
+        this.setState({
+            editorValue: resultJSON.data,
+        });
+    }
+
+    populateFiles(result) {
+        let resultJSON = JSON.parse(result);
+        if (resultJSON.status === 200) {
+            if (resultJSON.type === "open-directory") {
+                this.manageDirectory(resultJSON);
+            } else {
+                this.manageFile(resultJSON);
+            }
+        } else {
+            this.setState({
+                errorMessage: "Error processing the request",
+                showSnackbar: true,
+            });
+            this.lastClickFrom = "error";
+        }
+    }
 
     leftPanelFilesClickHandler(index) {
-        if (this.lastClickFrom === "left") {
+        if (this.lastClickFrom === "left" || this.lastClickFrom === "error" || this.lastClickFrom === "right") {
             // on double
             this.socket.send({
                 command: "back",
             });
         }
-        this.lastClickFrom = "left";
         this.setState({
             leftPanelFilesActive: index,
         });
@@ -115,11 +182,19 @@ export default class Editor extends Component {
                 command: "open-directory",
                 directory: f.name,
             });
+            this.lastClickFrom = "left";
         }
     }
     
     rightPanelFilesClickHandler(index) {
-        this.lastClickFrom = "right";
+        if (this.lastClickFrom === "back") {
+            const lastDirectorySplit = this.state.rightPwd.split("/");
+            const lastDirectory = lastDirectorySplit[lastDirectorySplit.length-1];
+            this.socket.send({
+                command: "open-directory",
+                directory: lastDirectory,
+            });
+        }
         this.setState({
             rightPanelFilesActive: index,
         });
@@ -134,11 +209,12 @@ export default class Editor extends Component {
                 command: "open-directory",
                 directory: f.name,
             });
+            this.lastClickFrom = "right";
         }
     }
 
     backButtonHandler() {
-        if (this.lastClickFrom === "left") {
+        if (this.lastClickFrom === "left" || this.lastClickFrom === "error" || this.lastClickFrom === "right") {
             this.socket.send({
                 command: "back",
             });
@@ -152,7 +228,7 @@ export default class Editor extends Component {
     render() {
         return(
             <MuiThemeProvider theme={theme}>
-                <Grid item lg={4} md={4} sm={4} xs={4} style={styles.container}>
+                <Grid item lg={4} md={4} sm={4} xs={4} style={styles.container}> 
                     <Grid container direction="column" justify="center" alignContent="center" style={styles.toolbar}>
                         <Grid item style={styles.title}>
                             <Typography variant="h5" color="default" align="center">
@@ -185,8 +261,19 @@ export default class Editor extends Component {
                     </Grid>                    
                 </Grid>
                 <Grid item lg={8} md={8} sm={8} xs={8}>
-                    
+                    <CodeEditor value={this.state.editorValue} mode={this.state.editorMode}/>
                 </Grid>
+                <CustomSnackbar
+                    open={this.state.showSnackbar} 
+                    onClose={
+                                () => {
+                                    this.setState({
+                                        showSnackbar: false
+                                    });
+                                }
+                            }
+                    warning={true}
+                    message={this.state.errorMessage}/>
             </MuiThemeProvider>
         );
     }

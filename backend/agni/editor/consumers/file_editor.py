@@ -4,7 +4,7 @@ import json
 import os
 import paramiko 
 from .enumerations import Commands
-
+from rest_framework import status
 
 class FileEditorConsumer(WebsocketConsumer):
     def connect(self):
@@ -31,44 +31,61 @@ class FileEditorConsumer(WebsocketConsumer):
 
     def go_back_if_possible(self):
         if(self.pwd == "/"):
-            self.send_json(dict(response="invalid move"))
+            self.send_json(dict(status=status.HTTP_403_FORBIDDEN))
             return
         
+        if(self.change_pwd_to_parent_directory()):
+            data = self.ls_directory()
+            self.send_json(data)
+    
+    def change_pwd_to_parent_directory(self):
         num_slashes = self.pwd.count('/')
         if (num_slashes > 0):
             self.pwd = "/".join(self.pwd.split("/")[:-1])
             if(len(self.pwd) == 0): self.pwd = "/"
-            data = self.ls_directory()
-            self.send_json(data)
+            return True
+        else:
+            return False
     
     def open_directory(self, directory):
-        self.pwd += "/"+directory
+        if(self.pwd[-1] != "/"):
+            self.pwd += "/"
+        self.pwd += directory
         data = self.ls_directory()
         return self.send_json(data)
 
     def open_file(self, file):
-        f = open(self.pwd+"/"+file, 'r')
-        content = f.read()
-        f.close()
-        return self.send_json(dict(data=content))
+        try:
+            f = open(self.pwd+"/"+file, 'r')
+            content = f.read()
+            f.close()
+            return self.send_json(dict(status=status.HTTP_200_OK, data=content, type="open-file", name=file))
+        except:
+            return self.send_json(dict(status=status.HTTP_403_FORBIDDEN))
 
     def ls_directory(self):
-        files = self.get_files_and_directory()
-        return dict(files=files, pwd=self.pwd)
+        try:
+            files = self.get_files_and_directory()
+            return dict(files=files, pwd=self.pwd, status=status.HTTP_200_OK, type="open-directory")
+        except:
+            return self.send_json(dict(status=status.HTTP_403_FORBIDDEN))       
     
     def get_files_and_directory(self):
-        original_directory = dir_path = os.path.dirname(os.path.realpath(__file__))
-        
-        os.chdir(self.pwd)
-        files = []
-        for f in os.listdir():
-            if (os.path.isfile(os.path.join(self.pwd, f))):
-                files.append(dict(name=f, type="f"))
-            elif (os.path.isdir(os.path.join(self.pwd, f))):
-                files.append(dict(name=f, type="d"))
-        os.chdir(original_directory)
-
-        return files
-
+        original_directory = os.path.dirname(os.path.realpath(__file__))
+        try:
+            os.chdir(self.pwd)
+            files = []
+            for f in os.listdir():
+                if (os.path.isfile(os.path.join(self.pwd, f))):
+                    files.append(dict(name=f, type="f"))
+                elif (os.path.isdir(os.path.join(self.pwd, f))):
+                    files.append(dict(name=f, type="d"))
+            return files            
+        except Exception as e:
+            print(e)
+            self.change_pwd_to_parent_directory()
+            os.chdir(original_directory)
+            raise e
+    
     def send_json(self, data):
         self.send(text_data=json.dumps(data))

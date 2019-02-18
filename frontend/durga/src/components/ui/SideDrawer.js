@@ -21,7 +21,6 @@ const styles = {
 export default class SideDrawer extends Component {
     constructor(props) {
         super(props);
-        console.log(props);
 
         this.items = [
             {

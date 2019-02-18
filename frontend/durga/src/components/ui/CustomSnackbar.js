@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { SnackbarContent, Icon, IconButton, Snackbar, Grid } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import { green } from '@material-ui/core/colors';
+import { green, red } from '@material-ui/core/colors';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import WarningOutlinedIcon from '@material-ui/icons/WarningOutlined';
 
 export default class CustomSnackbar extends Component {
     onClose() {
         this.props.onClose(false);
     }
+    
     render() {
         return(
             <Snackbar
@@ -24,7 +26,7 @@ export default class CustomSnackbar extends Component {
                     message={
                         <Grid container direction="row" justify="center" alignItems="center">
                             <Grid item style={{marginRight: "10px"}}>
-                                <CheckCircleIcon  />
+                                {this.props.warning ? <WarningOutlinedIcon /> : <CheckCircleIcon  /> }
                             </Grid>
                             <Grid item>
                                 {this.props.message}
@@ -32,7 +34,7 @@ export default class CustomSnackbar extends Component {
                         </Grid>
                     }
                     style = {{
-                        backgroundColor: green[600],
+                        backgroundColor: this.props.warning ? red[600] : green[600],
                     }}
                     action={[
                         <IconButton

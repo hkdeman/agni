@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { Grid } from '@material-ui/core';
-import SideDrawer from '../ui/SideDrawer';
 import DashboardCards from '../ui/DashboardCards';
-import FixedAppBar from '../ui/FixedAppBar';
-import { InformationContext } from '../../App';
 
 const styles = {
     menuButton: {
@@ -24,26 +21,9 @@ const styles = {
   };
 
 export default class Dashboard extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            drawerStatus: false,
-        };
-    }
-
-    toggleDrawer(status) {
-        this.setState({
-            drawerStatus: status,
-        });
-    }
-
     render() {
         return (
             <React.Fragment>
-                <FixedAppBar toggleDrawer={this.toggleDrawer.bind(this)}/>
-                <SideDrawer
-                    isOpen={this.state.drawerStatus} 
-                    toggleDrawer={this.toggleDrawer.bind(this)} />
                 <Grid item style={styles.root} 
                         lg={10} md={10} sm={10} xs={10}>
                     <Grid container spacing={24} direction="row" justify="space-around" alignItems="center">

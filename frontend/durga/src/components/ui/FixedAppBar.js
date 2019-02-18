@@ -22,7 +22,7 @@ export default class FixedAppBar extends Component {
         this.state = {
             hostButtonDOMElem: null,
             currentHost: 1,
-            sshFormOpen: true,
+            sshFormOpen: false,
         };
     }
 
