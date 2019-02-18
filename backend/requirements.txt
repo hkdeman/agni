@@ -13,6 +13,7 @@ constantly==15.1.0
 cryptography==2.5
 daphne==2.2.5
 Django==2.1.7
+django-cors-headers==2.4.0
 djangorestframework==3.9.1
 hiredis==1.0.0
 hyperlink==18.0.0

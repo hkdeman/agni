@@ -25,7 +25,7 @@ export default class WebSocketHandler {
 
     send(data) {
         if(this.isConnected) {
-            this.socket.send(data);
+            this.socket.send(JSON.stringify(data));
         } else {
             this.queue.push(data);
         }

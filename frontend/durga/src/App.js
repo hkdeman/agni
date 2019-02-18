@@ -1,33 +1,43 @@
 import React, { Component } from 'react';
-import WebSocketHandler from './components/handlers/WebSocketHandler';
+import { Grid } from '@material-ui/core';
+import Editor from './components/pages/dashboard/Editor';
+
+export const InformationContext = React.createContext("No Context");
 
 class App extends Component {
   constructor(props) {
     super(props);
-    const ws = new WebSocketHandler('ws://localhost:8000/api/ssh/overview', this.onMessage);
-    // ws.send(JSON.stringify({'command': 'open-directory', 'directory': 'test'}));
-    ws.send(JSON.stringify({'command': 'authentication'}));
-    // ws.send(JSON.stringify({'command': 'run-cmd', 'cmd': 'cd Documents/uni/'}));
-    // ws.send(JSON.stringify({'command': 'run-cmd', 'cmd': 'cd intro_vision_and_robotics'}));
-    // ws.send(JSON.stringify({'command': 'run-cmd', 'cmd': 'cat main-complete\(4\)-2.p'}));    
-    // ws.send(JSON.stringify({'command': 'run-cmd', 'cmd': 'cd ..'}));
-    // ws.send(JSON.stringify({'command': 'run-cmd', 'cmd': 'ls'}));
-    // ws.send(JSON.stringify({'command': 'run-cmd', 'cmd': 'cd s1766404'}));
-    // ws.send(JSON.stringify({'command': 'run-cmd', 'cmd': 'ls'}));
 
-    // ws.send(JSON.stringify({'command': 'open-directory', 'directory': 'IVR-assignment'}));
-    // ws.send(JSON.stringify({'command': 'open-file', 'file': 'main.py'}));
-  }
-
-  onMessage(data) {
-    console.log(data);
+    this.state = {
+      SSHInformation: { 
+        host: "", 
+        username: "",
+        password: "",
+        isConnected: false,
+      },
+    };
+    
+    this.setSSHInformation = (host, username, password, status) => {
+      let newSSHInformation = Object.assign({}, this.state.newSSHInformation);
+      newSSHInformation.host = host;
+      newSSHInformation.username = username;
+      newSSHInformation.password = password;
+      newSSHInformation.isConnected = status;
+      this.setState({newSSHInformation: newSSHInformation});
+    };
   }
 
   render() {
     return (
-      <div className="App">
-        Hello
-      </div>
+      <Grid 
+        container
+        direction="row"
+        justify="center"
+        alignItems="center"
+        style={{minHeight: "100vh"}}
+      >
+        <Editor />
+      </Grid>
     );
   }
 }

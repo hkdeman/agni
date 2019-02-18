@@ -53,18 +53,22 @@ class FileEditorConsumer(WebsocketConsumer):
         return self.send_json(dict(data=content))
 
     def ls_directory(self):
-        files, directories = self.get_files_and_directory()
-        return dict(files=files, directories=directories, pwd=self.pwd)
+        files = self.get_files_and_directory()
+        return dict(files=files, pwd=self.pwd)
     
     def get_files_and_directory(self):
         original_directory = dir_path = os.path.dirname(os.path.realpath(__file__))
         
         os.chdir(self.pwd)
-        files = list(filter(os.path.isfile, os.listdir()))
-        directories = list(filter(os.path.isdir, os.listdir()))
+        files = []
+        for f in os.listdir():
+            if (os.path.isfile(os.path.join(self.pwd, f))):
+                files.append(dict(name=f, type="f"))
+            elif (os.path.isdir(os.path.join(self.pwd, f))):
+                files.append(dict(name=f, type="d"))
         os.chdir(original_directory)
 
-        return files, directories
+        return files
 
     def send_json(self, data):
         self.send(text_data=json.dumps(data))

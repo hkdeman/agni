@@ -18,6 +18,7 @@ class SSHNetworkOverviewConsumer(WebsocketConsumer):
         self.ssh = None
         self.is_connected = True
         self.recursive_thread = threading.Thread(target=self.recursive_sender)
+        # Add operating system related info initially
         
     def recursive_sender(self):
         # while(self.is_connected):
@@ -47,11 +48,12 @@ class SSHNetworkOverviewConsumer(WebsocketConsumer):
         # self.recursive_thread.start()
         self.recursive_sender()
 
+
     def send_all_inf(self):
         self.send_disk_usage()
         self.send_cpu_usage()
-        # self.send_ram_usage()
-        # self.send_active_ram_usage()
+        self.send_ram_usage()
+        self.send_active_ram_usage()
     
     def send_disk_usage(self):
         index = -1
@@ -74,17 +76,33 @@ class SSHNetworkOverviewConsumer(WebsocketConsumer):
             self.send_json(dict(type=Type.DISK_USAGE.value, data=data))
     
     def send_cpu_usage(self):
-        for status, output in self.run_command("top | head -n 4"):
-            print(status, output)
-        # self.send_json(dict(type=Type.CPU_USAGE.value, data=psutil.cpu_percent()))
+        cpu_usage = None
+        for status, output in self.run_command("grep 'cpu ' /proc/stat | awk '{usage=($2+$4)*100/($2+$4+$5)} END {print usage}'"):
+            if (status == Status.SUCCESS.value):
+                cpu_usage = output
+
+        if (cpu_usage != None):
+            self.send_json(dict(type=Type.CPU_USAGE.value, data=cpu_usage))
     
-    # def send_ram_usage(self):
-    #     memory = psutil.virtual_memory()
-    #     data = dict(used=memory.used, available=memory.available)
-    #     self.send_json(dict(type=Type.RAM_USAGE.value, data=data))
+    def send_ram_usage(self):
+        lines = []
+        for status, output in self.run_command("free -m"):
+            if (status == Status.SUCCESS.value):
+                lines.append(list(filter(lambda x: x!="", output.split(" "))))
+        
+        if (len(lines)!=0):
+            used = lines[1][1]
+            free = lines[1][2]
+            data = dict(used=used, available=free)
+            self.send_json(dict(type=Type.RAM_USAGE.value, data=data))
     
-    # def send_active_ram_usage(self):
-    #     self.send_json(dict(type=Type.ACTIVE_RAM_USAGE.value, data=psutil.virtual_memory().percent))
+    def send_active_ram_usage(self):
+        active_ram_usage = None
+        for status, output in self.run_command("free | grep Mem | awk '{print $3/$2 * 100.0}'"):
+            if (status == Status.SUCCESS.value):
+                active_ram_usage = output
+        if (active_ram_usage != None):
+            self.send_json(dict(type=Type.ACTIVE_RAM_USAGE.value, data=active_ram_usage))
 
     def run_command(self, command):
         ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command(command)
