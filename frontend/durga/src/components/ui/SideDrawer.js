@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { List, ListItem, ListItemIcon, ListItemText, Drawer, MuiThemeProvider, createMuiTheme } from '@material-ui/core';
+import { List, ListItem, ListItemIcon, ListItemText, Drawer } from '@material-ui/core';
 import InfoOutlinedIcon from '@material-ui/icons/InfoOutlined';
 import SwapVertOutlinedIcon from '@material-ui/icons/SwapVertOutlined';
 import DirectionsRunOutlinedIcon from '@material-ui/icons/DirectionsRunOutlined';
@@ -16,14 +16,6 @@ const styles = {
         width: 'auto',
     },
 };
-
-const theme = createMuiTheme({
-    palette: {
-      type: 'dark', // Switching the dark mode on is a single property value change.
-    },
-    typography: { useNextVariants: true },
-});
-
 
 export default class SideDrawer extends Component {
     constructor(props) {
@@ -80,29 +72,27 @@ export default class SideDrawer extends Component {
 
     render() {
         return(
-            <MuiThemeProvider theme={theme}>
-                <Drawer
-                        color="default" 
-                        open={this.props.isOpen} 
-                        onClose={this.props.toggleDrawer.bind(this, false)}
-                    >
-                    <div
-                    tabIndex={0}
-                    role="button"
-                    >
-                        <div style={styles.list}>
-                            <List>
-                                {this.items.map((item, index) => (
-                                    <ListItem button key={item.text} onClick={item.onClick}>
-                                        <ListItemIcon>{<item.icon/>}</ListItemIcon>
-                                        <ListItemText primary={item.text} />
-                                    </ListItem>
-                                ))}
-                            </List>
-                        </div>
+            <Drawer
+                    color="default" 
+                    open={this.props.isOpen} 
+                    onClose={this.props.toggleDrawer.bind(this, false)}
+                >
+                <div
+                tabIndex={0}
+                role="button"
+                >
+                    <div style={styles.list}>
+                        <List>
+                            {this.items.map((item, index) => (
+                                <ListItem button key={item.text} onClick={item.onClick}>
+                                    <ListItemIcon>{<item.icon/>}</ListItemIcon>
+                                    <ListItemText primary={item.text} />
+                                </ListItem>
+                            ))}
+                        </List>
                     </div>
-                </Drawer>
-            </MuiThemeProvider>
+                </div>
+            </Drawer>
         );
     }
 }

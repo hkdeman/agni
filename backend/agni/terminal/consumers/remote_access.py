@@ -40,24 +40,27 @@ class RemoteAccessConsumer(WebsocketConsumer):
                         os.chdir(get_path_changing_to)
                     self.pwd = get_path_changing_to
                 except Exception as e:
-                    self.send_json(dict(status=str("-bash: cd: "+get_path_changing_to+": No such file or directory")))
+                    self.send_json(dict(status=403, error=str("-bash: cd: "+get_path_changing_to+": No such file or directory")))
                     break
             else:
                 self.run_commands_as_buffer(cmd)
 
     def run_commands_as_buffer(self, cmd):
-        for status, response in self.run_command(cmd):
-            self.send_json(dict(output=response, status=status))
+        try:
+            for status, response in self.run_command(cmd):
+                self.send_json(dict(output=response, type=status, status=200))
+        except Exception as e:
+            self.send_json(dict(status=403, error=str("-bash: cd: "+"".join(cmd)+": No such file or directory")))
 
     def run_command(self, command):
         # check for stderr, send error otherwise
-        p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        os.chdir(self.pwd)
+        p = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.DEVNULL, start_new_session=True)
         for line in p.stdout:
             yield Status.SUCCESS.value, line.decode('utf-8')[:-1]
-    
+
         for error in p.stderr:
             yield Status.ERROR.value, error.decode('utf-8')[:-1]
 
     def send_json(self, data):
         self.send(text_data=json.dumps(data))
-    

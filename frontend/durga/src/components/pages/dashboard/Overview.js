@@ -8,6 +8,11 @@ import { WEB_SOCKET } from '../../settings/Config';
 
 
 const styles = {
+    container: {
+        height: "100%", 
+        backgroundColor: PALETTE.gray001,
+        paddingBottom: "5%",
+},
     title: {
         marginTop: "40px",
         marginBottom: "10px",
@@ -94,7 +99,6 @@ export default class Overview extends Component {
     }
 
     updateActiveRAMUsage(data) {
-        console.log(data);
         let newData = Object.assign({}, this.state.activeRAMUsage);
         if (newData.y.length>100) {
             newData.y = newData.y.slice(1,100);
@@ -122,7 +126,7 @@ export default class Overview extends Component {
 
     render() {
         return(
-            <Grid container direction="row" justify="center" alignItems="flex-start" style={{height: "94vh", backgroundColor: PALETTE.gray001}}>            
+            <Grid container direction="row" justify="center" alignItems="flex-start" style={styles.container}>            
                 <Grid item lg={10} md={10} sm={10} xs={10}>
                     <Grid container direction="row" alignItems="center">
                     <Grid item lg={6} md={6} sm={6} xs={6}>
@@ -155,6 +159,20 @@ export default class Overview extends Component {
                                     />
                         </Grid>
                     </Grid>
+                    <Grid item lg={6} md={6} sm={6} xs={6}>
+                            <Grid item lg={12} md={12} sm={12} xs={12}>
+                                <Typography variant="h5" color="inherit" align="center" style={styles.title}>
+                                    RAM Usage
+                                </Typography>
+                            </Grid>
+                            <Grid item lg={12} md={12} sm={12} xs={12}>
+                                <PieChart
+                                    id="ram-usage"
+                                    X={this.state.RAMUsageData.X}
+                                    y={this.state.RAMUsageData.y}
+                                    />
+                            </Grid>
+                        </Grid>
                     {this.state.diskUsage.map((disk, index) => {
                         return <Grid item lg={6} md={6} sm={6} xs={6}>
                                 <Grid item lg={12} md={12} sm={12} xs={12}>
@@ -175,20 +193,6 @@ export default class Overview extends Component {
                                 </Grid>
                             </Grid>;
                         })}
-                        <Grid item lg={6} md={6} sm={6} xs={6}>
-                            <Grid item lg={12} md={12} sm={12} xs={12}>
-                                <Typography variant="h5" color="inherit" align="center" style={styles.title}>
-                                    RAM Usage
-                                </Typography>
-                            </Grid>
-                            <Grid item lg={12} md={12} sm={12} xs={12}>
-                                <PieChart
-                                    id="ram-usage"
-                                    X={this.state.RAMUsageData.X}
-                                    y={this.state.RAMUsageData.y}
-                                    />
-                            </Grid>
-                        </Grid>
                     </Grid>
                 </Grid>
             </Grid>
