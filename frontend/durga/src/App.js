@@ -3,6 +3,7 @@ import { Grid } from '@material-ui/core';
 import FixedAppBar from './components/ui/FixedAppBar';
 import SideDrawer from './components/ui/SideDrawer';
 import Overview from './components/pages/dashboard/Overview';
+import Editor from './components/pages/dashboard/Editor';
 
 export const InformationContext = React.createContext("No Context");
 

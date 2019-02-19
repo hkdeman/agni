@@ -13,13 +13,12 @@ class NetworkOverviewConsumer(WebsocketConsumer):
         self.accept()
         self.is_connected = True
         self.recursive_thread = threading.Thread(target=self.recursive_sender)
-        # self.recursive_thread.start()
-        self.recursive_sender()
+        self.recursive_thread.start()
 
     def recursive_sender(self):
-        # while(self.is_connected):
-        self.send_all_inf()
-        time.sleep(0.5)
+        while(self.is_connected):
+            self.send_all_inf()
+            time.sleep(0.5)
     
     def disconnect(self, close_code):
         self.is_connected = False

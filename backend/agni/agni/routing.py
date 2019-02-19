@@ -8,8 +8,8 @@ import process.routing
 
 routes = []
 # routes.extend(terminal.routing.websocket_urlpatterns)
-routes.extend(editor.routing.websocket_urlpatterns)
-# routes.extend(overview.routing.websocket_urlpatterns)
+# routes.extend(editor.routing.websocket_urlpatterns)
+routes.extend(overview.routing.websocket_urlpatterns)
 # routes.extend(network.routing.websocket_urlpatterns)
 # routes.extend(process.routing.websocket_urlpatterns)
 
