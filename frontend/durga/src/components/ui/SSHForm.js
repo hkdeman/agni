@@ -24,6 +24,7 @@ export default class SSHForm extends Component {
     }
 
     saveSSHCredentials() {
+        this.props.setSSHDetails(this.state.host, this.state.username, this.state.password);
         this.setState({
             host: "",
             username: "",

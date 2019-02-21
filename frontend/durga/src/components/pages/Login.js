@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Grid, TextField, Button, Typography } from '@material-ui/core';
+import { Redirect } from 'react-router-dom';
 
 
 export default class Login extends Component {
@@ -7,6 +8,12 @@ export default class Login extends Component {
         super(props);
         this.state = {
             password: "",
+            isAuthenticated: false,
+        };
+        try {
+            this.fromURL = this.props.location.state.from.pathname;
+        } catch (e) {
+            this.fromURL = "/";
         }
     }
 
@@ -23,10 +30,19 @@ export default class Login extends Component {
     }
 
     onSubmit() {
-        console.log(this.state.password);
+        this.props.setToken(this.state.password);
+        this.setState({
+            isAuthenticated: true,
+        });
     }
 
     render() {
+        if(this.state.isAuthenticated) {
+            return (
+                <Redirect to={{ pathname: this.fromURL }} />
+            );
+        }
+        
         return(
             <Grid container direction="row" justify="center" alignItems="center">
                 <Grid item lg={10} md={10} sm={10} xs={10}>

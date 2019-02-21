@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { AppBar, Toolbar, IconButton, Typography, Grid, Button, Menu, MenuItem } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import GreenLEDLight from './GreenLEDLight';
-import SSHForm from './SSHForm';
+import XSSHForm from '../../containers/ui/XSSHForm';
 
 const styles = {
     menuButton: {
@@ -79,7 +79,7 @@ export default class FixedAppBar extends Component {
                     </MenuItem>
                 </Menu>
                 </Toolbar>
-                <SSHForm open={this.state.sshFormOpen} toggleDialog={this.handleSSHForm.bind(this)} />
+                <XSSHForm open={this.state.sshFormOpen} toggleDialog={this.handleSSHForm.bind(this)} />
             </AppBar>
         );
     }

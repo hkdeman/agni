@@ -63,6 +63,10 @@ export default class Editor extends Component {
         this.lastClickFrom = "";
     }
 
+    componentWillReceiveProps(props) {
+        console.log(props);
+    }
+
     setupSockets() {
         this.socket = new WebSocketHandler(WEB_SOCKET+"/api/host/file-editor", this.populateFiles.bind(this));
     }

@@ -1,9 +1,15 @@
 import React, { Component } from 'react';
-import { SnackbarContent, Icon, IconButton, Snackbar, Grid } from '@material-ui/core';
+import { SnackbarContent, Icon, IconButton, Snackbar, Grid, Typography } from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
 import { green, red } from '@material-ui/core/colors';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import WarningOutlinedIcon from '@material-ui/icons/WarningOutlined';
+
+const styles = {
+    icon: {
+        color: "white",
+    },
+};
 
 export default class CustomSnackbar extends Component {
     onClose() {
@@ -26,10 +32,12 @@ export default class CustomSnackbar extends Component {
                     message={
                         <Grid container direction="row" justify="center" alignItems="center">
                             <Grid item style={{marginRight: "10px"}}>
-                                {this.props.warning ? <WarningOutlinedIcon /> : <CheckCircleIcon  /> }
+                                {this.props.warning ? <WarningOutlinedIcon style={styles.icon}/> : <CheckCircleIcon style={styles.icon}/> }
                             </Grid>
-                            <Grid item>
-                                {this.props.message}
+                            <Grid item style={{marginLeft: "10px"}}>
+                                <Typography variant="body1" color="default">
+                                    {this.props.message}
+                                </Typography>
                             </Grid>
                         </Grid>
                     }
@@ -43,7 +51,7 @@ export default class CustomSnackbar extends Component {
                             color="inherit"
                             onClick={this.onClose.bind(this)}
                             >
-                            <CloseIcon style={{fontSize: 20}} />
+                            <CloseIcon style={{fontSize: 20, color: "white"}} />
                         </IconButton>,
                     ]}
                     />

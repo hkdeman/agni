@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import { Card, Grid, Typography } from '@material-ui/core';
 import { PALETTE } from '../styles/ColorPalette';
+import { Link } from 'react-router-dom';
+
 
 const styles = {
     card: {
@@ -26,18 +28,20 @@ const styles = {
 export default class DashboardCards extends Component {
     render() {
         return(
-            <Card style={styles.card}>
-                <Grid container direction="row" justify="center" alignItems="center" style={styles.grid}>
-                    <Grid item>
-                        <Typography color="inherit" variant="h4" style={styles.title}>
-                            {this.props.title}
-                        </Typography>
-                        <Typography color="inherit" variant="body1" style={styles.subTitle}>
-                            {this.props.children}
-                        </Typography>
+            <Link to={this.props.to} style={{ textDecoration: 'none', color: "black"}}>
+                <Card style={styles.card}>
+                    <Grid container direction="row" justify="center" alignItems="center" style={styles.grid}>
+                        <Grid item>
+                            <Typography color="inherit" variant="h4" style={styles.title}>
+                                {this.props.title}
+                            </Typography>
+                            <Typography color="inherit" variant="body1" style={styles.subTitle}>
+                                {this.props.children}
+                            </Typography>
+                        </Grid>
                     </Grid>
-                </Grid>
-            </Card>
+                </Card>
+            </Link>            
         );
     }
 }
