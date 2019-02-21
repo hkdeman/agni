@@ -50,11 +50,16 @@ export default class RemoteAccess extends Component {
     }
 
     outputHandler(result) {
-      let resultJSON = JSON.parse(result);
-      if (resultJSON.status === 200) {
-        this.addLineOnTheOutput(resultJSON.output, "success");
-      } else if (resultJSON.status === 403) {
-        this.addLineOnTheOutput(resultJSON.error, "error");
+      const resultJSON = JSON.parse(result);
+      switch (resultJSON.status) {
+        case 200:
+          this.addLineOnTheOutput(resultJSON.output, "success");
+          break;
+        case 403:
+          this.addLineOnTheOutput(resultJSON.error, "error");
+          break;
+        default:
+          break;
       }
     }
 

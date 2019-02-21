@@ -6,6 +6,9 @@ import Overview from './components/pages/dashboard/Overview';
 import RemoteAccess from './components/pages/dashboard/RemoteAccess';
 import Editor from './components/pages/dashboard/Editor';
 import Dashboard from './components/pages/Dashboard';
+import Network from './components/pages/dashboard/Network';
+import Process from './components/pages/dashboard/Process';
+import Login from './components/pages/Login';
 
 export const InformationContext = React.createContext("No Context");
 
@@ -58,11 +61,8 @@ class App extends Component {
           alignItems="flex-start"
           style={{marginTop:"64px"}}
         >
-          <FixedAppBar toggleDrawer={this.toggleDrawer.bind(this)}/>
-          <SideDrawer
-              isOpen={this.state.drawerStatus}
-              toggleDrawer={this.toggleDrawer.bind(this)} />
-            <RemoteAccess />
+          
+            <Login />
         </Grid>
       </MuiThemeProvider>
     );
