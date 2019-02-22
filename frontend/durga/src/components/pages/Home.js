@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
-import FixedAppBar from '../ui/FixedAppBar';
 import Dashboard from './Dashboard';
 import XLogin from '../../containers/pages/XLogin';
 import SideDrawer from '../ui/SideDrawer';
@@ -11,6 +10,7 @@ import XProcess from '../../containers/pages/dashboard/XProcess';
 import XRemoteAccess from '../../containers/pages/dashboard/XRemoteAccess';
 import XPrivateRoute from '../../containers/routes/XPrivateRoute';
 import FourOFour from './error/FourOFour';
+import XFixedAppBar from '../../containers/ui/XFixedAppBar';
 
 
 export default class Home extends Component {
@@ -20,7 +20,6 @@ export default class Home extends Component {
             drawerStatus: false,
             isAuthenticated: this.checkToken(props),
         };
-        console.log(this.state);
     }
 
     componentWillReceiveProps(props) {
@@ -53,7 +52,7 @@ export default class Home extends Component {
                     this.state.isAuthenticated 
                     ? 
                         <React.Fragment>
-                            <FixedAppBar toggleDrawer={this.toggleDrawer.bind(this)}/>
+                            <XFixedAppBar toggleDrawer={this.toggleDrawer.bind(this)}/>
                             <SideDrawer
                                 isOpen={this.state.drawerStatus}
                                 toggleDrawer={this.toggleDrawer.bind(this)} />

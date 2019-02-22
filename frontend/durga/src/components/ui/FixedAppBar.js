@@ -26,6 +26,20 @@ export default class FixedAppBar extends Component {
         };
     }
 
+    componentWillReceiveProps(props) {
+        this.checkSSHDetails(props);
+    }
+
+    checkSSHDetails(props) {
+        if(props.ssh) {
+            if(props.ssh.isConnected !== void 0 && props.ssh.isConnected) {
+                this.setState({
+                    currentHost: 2,
+                });
+            }
+        }
+    }
+
     shouldComponentUpdate(nextProps, nextState) {
         return true;
     }
