@@ -1,5 +1,7 @@
 import { connect } from 'react-redux';
 import PrivateRoute from '../../components/routes/PrivateRoute';
+import { withRouter } from 'react-router-dom';
+
 
 const mapStateToProps = (state) => {
     return state;
@@ -10,4 +12,4 @@ const XPrivateRoute = connect(
     null,
 )(PrivateRoute);
 
-export default XPrivateRoute;
+export default withRouter(XPrivateRoute);

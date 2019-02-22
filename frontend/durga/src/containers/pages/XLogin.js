@@ -1,6 +1,7 @@
 import { connect } from 'react-redux';
 import { setToken } from '../../actions';
 import Login from '../../components/pages/Login';
+import { withRouter } from 'react-router-dom';
 
 
 const mapDispatchToProps = dispatch => ({
@@ -12,4 +13,4 @@ const XLogin = connect(
     mapDispatchToProps
   )(Login);
 
-export default XLogin;
+export default withRouter(XLogin);

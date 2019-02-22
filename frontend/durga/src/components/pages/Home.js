@@ -10,6 +10,7 @@ import XOverview from '../../containers/pages/dashboard/XOverview';
 import XProcess from '../../containers/pages/dashboard/XProcess';
 import XRemoteAccess from '../../containers/pages/dashboard/XRemoteAccess';
 import XPrivateRoute from '../../containers/routes/XPrivateRoute';
+import FourOFour from './error/FourOFour';
 
 
 export default class Home extends Component {
@@ -19,6 +20,7 @@ export default class Home extends Component {
             drawerStatus: false,
             isAuthenticated: this.checkToken(props),
         };
+        console.log(this.state);
     }
 
     componentWillReceiveProps(props) {
@@ -51,22 +53,23 @@ export default class Home extends Component {
                     this.state.isAuthenticated 
                     ? 
                         <React.Fragment>
-                        <FixedAppBar toggleDrawer={this.toggleDrawer.bind(this)}/>
-                        <SideDrawer
-                            isOpen={this.state.drawerStatus}
-                            toggleDrawer={this.toggleDrawer.bind(this)} />
+                            <FixedAppBar toggleDrawer={this.toggleDrawer.bind(this)}/>
+                            <SideDrawer
+                                isOpen={this.state.drawerStatus}
+                                toggleDrawer={this.toggleDrawer.bind(this)} />
                         </React.Fragment>
                     :
-                        ""
+                        <span></span>
                 }
-                <Route path="/login" component={XLogin} />
                 <Switch>
+                    <Route path="/login" component={XLogin} />
                     <XPrivateRoute exact path="/" component={Dashboard} />
                     <XPrivateRoute path="/editor" component={XEditor} />
                     <XPrivateRoute path="/network" component={XNetwork} />
                     <XPrivateRoute path="/overview" component={XOverview} />
                     <XPrivateRoute path="/processes" component={XProcess} />
                     <XPrivateRoute path="/remote-access" component={XRemoteAccess} />
+                    <Route component={FourOFour} />
                 </Switch>
             </React.Fragment>
         );

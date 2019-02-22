@@ -60,7 +60,7 @@ export default class Dashboard extends Component {
                     <Grid container spacing={24} direction="row" justify="space-around" alignItems="center">
                         <Grid item lg={6} md={6} sm={6} xs={6} style={styles.padding}>
                             <DashboardCards
-                                to="/terminal"
+                                to="/remote-access"
                                 title="Remote Access">
                                 Access the terminal of the host just like old days.
                             </DashboardCards>
