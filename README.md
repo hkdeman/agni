@@ -1,4 +1,4 @@
-# Agni
+# Agni 
 
 A dashboard service that let's you see the overview of your laptop like ram usage, cpu usage (real time). It also allows you to see network packets exchange, process running (potentially kill them), give remote access, and editor accesss.
 
